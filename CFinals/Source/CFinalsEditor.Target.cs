@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class cFinalProjectEditorTarget : TargetRules
+public class CFinalsEditorTarget : TargetRules
 {
-	public cFinalProjectEditorTarget( TargetInfo Target) : base(Target)
+	public CFinalsEditorTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
-		ExtraModuleNames.Add("cFinalProject");
+		ExtraModuleNames.Add("CFinals");
 	}
 }
