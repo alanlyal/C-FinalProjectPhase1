@@ -4,46 +4,61 @@
 
 AEnvironmentActor::AEnvironmentActor()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	//root
-	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = RootScene;
-	//mesh
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(RootComponent);
-	//light
-	PointLightComp = CreateDefaultSubobject<UPointLightComponent>(TEXT("Pointlight"));
-	PointLightComp->SetupAttachment(MeshComp);
+    PrimaryActorTick.bCanEverTick = true;
+
+    // Root
+    RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+    RootComponent = RootScene;
+
+    // Mesh
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+    MeshComp->SetupAttachment(RootComponent);
+
+    // Light
+    PointLightComp = CreateDefaultSubobject<UPointLightComponent>(TEXT("PointLight"));
+    PointLightComp->SetupAttachment(MeshComp);
 }
 
 void AEnvironmentActor::BeginPlay()
 {
-	Super::BeginPlay();
-		if (MeshComp && MeshComp->GetMaterial(0))
-		{
-			LightMaterial = MeshComp->CreateDynamicMaterialInstance(0);
-		}
+    Super::BeginPlay();
+
+    if (MeshComp && MeshComp->GetMaterial(0))
+    {
+        DynamicMaterial = MeshComp->CreateDynamicMaterialInstance(0);
+    }
 }
 
 void AEnvironmentActor::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-	float time = GetWorld()->GetTimeSeconds();
-	//movement
-	float height = FMath::Sin(time * speed) * amplitude;
-	MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, height));
-	//light
-	float pulse = (FMath::Cos(time * 2.0f) + 1.2f)*2000.0f;
-	if (PointLightComp)
-	{
+    Super::Tick(DeltaTime);
 
-		PointLightComp->SetIntensity(pulse);
-		PointLightComp->SetLightColor(LightColor);
-	}
-	//visual
-		if (LightMaterial)
-		{
-			LightMaterial->SetVectorParameterValue(TEXT("Color"), LightColor);
-		}
+    const float Time = GetWorld()->GetTimeSeconds();
 
+    // Movement
+    if (MeshComp)
+    {
+        const float Height = FMath::Sin(Time * MovementSpeed) * MovementAmplitude;
+        MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, Height));
+    }
+
+    // Light pulse normalized from 0 to 1
+    const float LightAlpha = (FMath::Cos(Time * LightPulseSpeed) + 1.0f) * 0.5f;
+    const float LightIntensity = FMath::Lerp(LightMinIntensity, LightMaxIntensity, LightAlpha);
+
+    if (PointLightComp)
+    {
+        PointLightComp->SetIntensity(LightIntensity);
+        PointLightComp->SetLightColor(LightColor);
+    }
+
+    // Material glow pulse normalized from 0 to 1
+    const float GlowAlpha = (FMath::Sin(Time * GlowPulseSpeed) + 1.0f) * 0.5f;
+    const float GlowValue = FMath::Lerp(GlowMin, GlowMax, GlowAlpha);
+
+    if (DynamicMaterial)
+    {
+        DynamicMaterial->SetVectorParameterValue(TEXT("Color"), MaterialColor);
+        DynamicMaterial->SetScalarParameterValue(TEXT("Glow"), GlowValue);
+    }
 }
