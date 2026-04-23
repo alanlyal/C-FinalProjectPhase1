@@ -1,6 +1,7 @@
 #include "MedievalCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 AMedievalCharacter::AMedievalCharacter()
@@ -23,6 +24,15 @@ void AMedievalCharacter::BeginPlay()
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 
+	if (PlayerHUDClass)
+	{
+		PlayerHUD = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDClass);
+		if (PlayerHUD)
+		{
+			PlayerHUD->AddToViewport();
+		}
+	}
+
 }
 
 // Called every frame
@@ -30,6 +40,18 @@ void AMedievalCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	HandleStamina(DeltaTime);
+}
+
+float AMedievalCharacter::GetHealthPercent() const
+{
+	if (MaxHealth <= 0.f) return 0.f;
+	return CurrentHealth / MaxHealth;
+}
+
+float AMedievalCharacter::GetStaminaPercent() const
+{
+	if (MaxStamina <= 0.f) return 0.f;
+	return CurrentStamina / MaxStamina;
 }
 
 void AMedievalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

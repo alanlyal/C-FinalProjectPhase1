@@ -5,6 +5,9 @@
 #include "InputActionValue.h"
 #include "MedievalCharacter.generated.h"
 
+class UInputAction;
+class UUserWidget;
+
 UCLASS()
 class CFINALS_API AMedievalCharacter : public ACharacter
 {
@@ -18,7 +21,34 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// HUD
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerHUDClass;
+
+	UPROPERTY()
+	UUserWidget* PlayerHUD;
+
 public:
+
+	// UI Getters
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetHealthPercent() const;
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetStaminaPercent() const;
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetCurrentHealth() const { return CurrentHealth; }
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetMaxHealth() const { return MaxHealth; }
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetCurrentStamina() const { return CurrentStamina; }
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetMaxStamina() const { return MaxStamina; }
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
