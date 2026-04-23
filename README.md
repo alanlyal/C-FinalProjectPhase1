@@ -12,4 +12,9 @@ How to Run:
 . Both Blueprint actors will automatically begin animating, player input not required
 . To stop, press the Stop button or Escape
 
+How to Play:
+. Press the Play button in the Unreal toolbar
+. run around the map, pick up cheeseburgers for hp and beer for stamina
+. avoid the npc and spike traps as they drain your hp
+. get to the house door to visit a new dimension
 No special configuration is required. All systems are self-contained and run on Play. 
